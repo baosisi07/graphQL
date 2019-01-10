@@ -1,8 +1,16 @@
 import mongoose from 'mongoose'
 import config from '../config/index'
-import { resolve } from 'path';
+import glob from 'glob'
+import { resolve } from 'path'
 
-export const database = () => {
+export const initSchema = async() => {
+    glob.sync(resolve(__dirname,'./schema', '**/*.js')).forEach((filename) => {
+        require(filename)
+    })
+    // glob.sync(resolve(__dirname, './schema', '**/*.js')).forEach(require)
+    
+}
+export const database = async() => {
     let connectTimes = 0;
 
     return new Promise((resolve, reject) => {
@@ -11,7 +19,7 @@ export const database = () => {
             mongoose.set('debug', true)
           }
           
-        mongoose.connect(config.dbPath)
+        mongoose.connect(config.dbPath, { useNewUrlParser: true })
 
         mongoose.connection.on('error', (err) => {
             console.log(err)
