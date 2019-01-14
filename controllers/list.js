@@ -3,8 +3,7 @@ const List = mongoose.model('list')
 
 export const getAllList = async (ctx, next) => {
     const listData = List.find({})
-    console.log(listData)
-    if(listData.length) {
+    if (listData.length) {
         ctx.body = {
             success: true,
             data: listData
@@ -20,7 +19,7 @@ export const addOne = async (ctx, next) => {
     const data = ctx.request.body
     const list = new List(data)
     const saveList = await list.save()
-    if(saveList) {
+    if (saveList) {
         ctx.body = {
             success: true,
             id: data.id

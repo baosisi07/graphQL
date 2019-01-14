@@ -14,7 +14,7 @@ import {
     GraphQLInputObjectType,
     GraphQLInputType
   } from 'graphql';
-  import {addOne} from '../controllers/graphqlHandler.js' 
+  import { addOne, delOne, editOne, tickOne } from '../controllers/graphqlHandler.js' 
 import mongoose from 'mongoose'
 const List = mongoose.model('list')
 
@@ -96,7 +96,50 @@ let mutationType = new GraphQLObjectType({
             },
             type: outputType,
             resolve(value, args) {
+                console.log(value)
                 let result = addOne(args.listObj)
+                return result
+            }
+        },
+        editOne: {
+            name: 'editOne',
+            args: {
+                listObj: {
+                    type: inputType
+                }
+            },
+            type: outputType,
+            resolve(value, args) {
+                let result = editOne(args.listObj)
+                return result
+            }
+        },
+        delOne: {
+            name: 'delOne',
+            args: {
+                id: {
+                    type: GraphQLString
+                }
+            },
+            type: outputType,
+            resolve(value, args) {
+                let result = delOne(args)
+                return result
+            }
+        },
+        tickOne: {
+            name: 'tickOne',
+            args: {
+                id: {
+                    type: GraphQLString
+                },
+                checked: {
+                    type: GraphQLBoolean
+                }
+            },
+            type: outputType,
+            resolve() {
+                let result = tickOne(args)
                 return result
             }
         }

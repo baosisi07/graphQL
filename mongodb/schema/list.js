@@ -21,7 +21,7 @@ const listSchema = new Schema({
     }
 })
 
-listSchema.pre('save', (next) => {
+listSchema.pre('save', function(next) {
     if(this.isNew) {
         this.meta.createdAt = this.meta.updatedAt = Date.now()
     } else {

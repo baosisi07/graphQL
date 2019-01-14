@@ -23,3 +23,96 @@ export const addOne = async (obj) => {
   }
   return result
 }
+// 编辑
+export const editOne = async (obj) => {
+  console.log(obj)
+  // 获取请求的数据
+  let hasError = false
+  let msg = null
+
+  List.findOne({id: obj.id}, (err, doc) => {
+    if(err) {
+      hasError = true
+      msg = err
+    } else {
+      doc.title = obj.title
+      doc.desc = obj.desc;
+      doc.date = obj.date;
+      doc.save();
+    }
+  })
+  let result = {}
+  if (hasError) {
+    result = {
+      success: true,
+      id: obj.id
+    }
+  } else {
+    result = {
+      success: false,
+      id: obj.id
+    }
+  }
+  return result
+}
+export const delOne = async (obj) => {
+  console.log(obj.id)
+  let hasError = false
+  let msg = null
+  List.remove({id: obj.id}, (err, doc) => {
+    if(err) {
+      hasError = true
+      msg = err
+    } else {
+      msg = doc
+    }
+  })
+  let result = {}
+  if (hasError) {
+    result = {
+      success: false,
+      id: obj.id,
+      msg: msg
+    }
+  } else {
+    result = {
+      success: true,
+        id: obj.id,
+        msg: msg
+    }
+  }
+  return result
+}
+
+export const tickOne = async (obj) => {
+  console.log(obj.id)
+  let hasError = false
+  let msg = null
+  List.findOne({
+    id: obj.id
+  }, (err, doc) => {
+    if (err) {
+      hasError = true
+      msg = err
+    } else {
+      doc.checked = obj.checked
+      doc.save()
+      msg = doc
+    }
+  })
+  let result = {}
+  if (hasError) {
+    result = {
+      success: false,
+      id: obj.id,
+      msg: msg
+    }
+  } else {
+    result = {
+      success: true,
+      id: obj.id,
+      msg: msg
+    }
+  }
+  return result
+}
