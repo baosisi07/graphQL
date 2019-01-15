@@ -1,5 +1,8 @@
 import mongoose from 'mongoose'
 const List = mongoose.model('list')
+export const getList = async () => {
+  return List.find({}).exec()
+}
 // 新增
 export const addOne = async (obj) => {
   console.log(obj)
@@ -59,7 +62,7 @@ export const delOne = async (obj) => {
   console.log(obj.id)
   let hasError = false
   let msg = null
-  List.remove({id: obj.id}, (err, doc) => {
+  List.deleteOne({id: obj.id}, (err, doc) => {
     if(err) {
       hasError = true
       msg = err
