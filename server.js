@@ -9,8 +9,7 @@ import {
 
 
 import {
-    ApolloServer,
-    gql
+    ApolloServer
 } from 'apollo-server-koa'
 import {
     makeExecutableSchema
