@@ -6,14 +6,14 @@
          list: [{
              title: 'homework',
              desc: 'do homework',
-             date: '2018-09-07 09:34:02',
+             date: '2019-01-07 09:34:02',
              id: '123132',
              checked: false
            },
            {
              title: 'eating',
              desc: 'lunch',
-             date: '2018-08-31 09:34:02',
+             date: '2019-01-07 09:34:02',
              id: '1111',
              checked: true
            }
