@@ -15,7 +15,7 @@ import {
     makeExecutableSchema
 } from 'graphql-tools';
 
-
+import cors from 'koa-cors'
 
 ;
 (async () => {
@@ -23,10 +23,12 @@ import {
     await initSchema()
 
     const app = new Koa()
+    
     const router = new Router()
-    const port = 3000
+    const port = 4000
+    app.use(cors())
     app.use(BodyParser())
-    app.use(Static(__dirname + '/public'))
+    // app.use(Static(__dirname + '/'))
     app.use(router.routes())
         .use(router.allowedMethods())
     // graphql    

@@ -1,5 +1,5 @@
 {
-  "name": "graphQL",
+  "name": "graphQL-Learning",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -10,6 +10,7 @@
     "graphql-tools": "^4.0.3",
     "koa": "^2.6.2",
     "koa-bodyparser": "^4.2.1",
+    "koa-cors": "0.0.16",
     "koa-router": "^7.4.0",
     "koa-static": "^5.0.0",
     "merge-graphql-schemas": "^1.5.8"
@@ -22,10 +23,15 @@
     "nodemon": "^1.18.9"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "start http://localhost:3000 && nodemon start.js"
+    "start": "nodemon start.js"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }

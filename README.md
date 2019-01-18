@@ -18,7 +18,7 @@ let queryType = new GraphQLObjectType({
 graphql-schema-language目录
 
 使用apollo-server-koa这个库
-考虑到多个数据查询及变更，将type和rsolver分开管理，每个query可定义成单个文件，清晰好管理
+考虑到多个数据查询及变更，将type和resolver分开管理，每个query可定义成单个文件，清晰好管理
 使用 GraphQL Schema Language实现数据查询， 语法如下所示：
 ```
 type List {
