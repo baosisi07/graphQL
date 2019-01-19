@@ -47,12 +47,12 @@ export const editOne = async (obj) => {
   let result = {}
   if (hasError) {
     result = {
-      success: true,
+      success: false,
       id: obj.id
     }
   } else {
     result = {
-      success: false,
+      success: true,
       id: obj.id
     }
   }

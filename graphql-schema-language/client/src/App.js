@@ -6,14 +6,18 @@ import {
   Button,
   Skeleton,
   Modal,
-  message
+  message,
+  Checkbox
 } from 'antd'
+import moment from 'moment';
 import './App.css'
 import axios from 'axios'
+import TaskForm from './form'
 const {
   Header,
   Content,
 } = Layout
+
 const count = 3
 const Url = 'http://localhost:4000/graphql'
 class App extends Component {
@@ -25,10 +29,7 @@ class App extends Component {
     modal2Visible: false,
     selectedId: '',
     editItem: {},
-    modalType: '',
-    feild: {
-
-    }
+    modalType: ''
   }
 
   componentDidMount() {
@@ -47,25 +48,7 @@ class App extends Component {
     }
     return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
   }
-  getTime(time) {
-    var oDate = new Date(time);
-    var vYear = oDate.getFullYear();
-    var vMon = oDate.getMonth() + 1;
-    var vDay = oDate.getDate();
-    vMon = vMon < 10 ? '0' + vMon : vMon;
-    vDay = vDay < 10 ? '0' + vDay : vDay;
-    var today = vYear + '-' + vMon + '-' + vDay;
 
-    var hour = oDate.getHours();
-    var min = oDate.getMinutes();
-    var sec = oDate.getSeconds();
-    hour = hour < 10 ? '0' + hour : hour;
-    min = min < 10 ? '0' + min : min;
-    sec = sec < 10 ? '0' + sec : sec;
-
-    var str = hour + ':' + min + ':' + sec;
-    return today + ' ' + str;
-  }
   loadData() {
     this.getData((res) => {
       this.setState({
@@ -116,15 +99,15 @@ class App extends Component {
         callback(res.data)
       })
   }
-   addData = (callback) => {
-     const addItem = this.state.addItem
+   addData = (arg, callback) => {
+     const addItem = arg
      let data = {
        query: `mutation{
                       addOne(listObj:{
                         id: "${this.getUid()}",
                         desc: "${addItem.desc}",
                         title: "${addItem.title}",
-                        date: "${this.getTime(addItem.date)}",
+                        date: "${addItem.date}",
                         checked: false
                       }){
                         id,
@@ -142,21 +125,44 @@ class App extends Component {
          callback(res.data)
        })
    }
-    editData = (callback) => {
-      const editItem = this.state.editItem
-
+    editData = (arg, callback) => {
+      const editItem = arg
+      editItem.id = this.state.editItem.id
       let data = {
         query: `mutation{
                     editOne(listObj:{
                       id: "${editItem.id}",
                       desc: "${editItem.desc}",
                       title: "${editItem.title}",
-                      date: "${this.getTime(editItem.date)}",
+                      date: "${editItem.date}",
                     }){
                       id,
                       success
                     }
                   }`
+      }
+      axios({
+          method: 'post',
+          url: Url,
+          data,
+          timeout: 10000
+        })
+        .then(res => {
+          callback(res.data)
+        })
+    }
+    tickData = (arg, callback) => {
+      const editItem = arg
+      let data = {
+        query: `mutation{
+          tickOne(
+            id:"${editItem.id}",
+            checked:${!editItem.checked}
+          ){
+            id,
+            success
+          }
+        }`
       }
       axios({
           method: 'post',
@@ -200,13 +206,14 @@ class App extends Component {
   }
   showModal1(type, item) {
     this.setState({
-      editItem: item,
-      modalType: type
+      modalType: type,
+      editItem: item
     })
+   
+
     this.setModal1Visible(true)
   }
   setModal1Visible(modal1Visible) {
-    console.log(this.state)
     this.setState({
       modal1Visible
     });
@@ -222,8 +229,8 @@ class App extends Component {
       }   
     })
   }
-  addTask() {
-    this.addData((res) => {
+  addTask(arg) {
+    this.addData(arg, (res) => {
       if (res.data.addOne.success) {
         this.success('添加成功！')
         this.setModal1Visible(false)
@@ -233,8 +240,8 @@ class App extends Component {
       }
     })
   }
-  editTask() {
-    this.editData((res) => {
+  editTask(arg) {
+    this.editData(arg, (res) => {
       if (res.data.editOne.success) {
         this.success('编辑成功！')
         this.setModal1Visible(false)
@@ -244,22 +251,38 @@ class App extends Component {
       }
     })
   }
-  chooseTask() {
+  tickTask(arg) {
+    this.tickData(arg, (res) => {
+      if (res.data.tickOne.success) {
+        this.success('又完成一件，哈哈哈哈！')
+        this.loadData()
+      } else {
+        this.error('编辑错误，请重试！')
+      }
+    })
+  }
+  chooseTask(arg) {
     let handlerType = this.state.modalType
     if (handlerType === 'edit') {
-      this.editTask()
+
+      this.editTask(arg)
     } else {
-      this.addTask()
+      this.addTask(arg)
     }
+  }
+  onChange(arg) {
+    console.log(arg)
+    this.tickTask(arg)
+    // console.log(`checked = ${e.target.checked}`)
   }
   render() {
     const { initLoading, list } = this.state;
-
+    const modalType = this.state.modalType
 
     return ( 
       <Layout >
-        <Header> <Button type='primary' onClick = {
-                      () => this.showModal1('add')
+        <Header><div style={{float: 'left', color: '#eee', marginRight: '30px', fontSize: '18px'}}>TODO LIST</div> <Button type='primary' onClick = {
+                      () => this.showModal1('add',{})
                     }>添加任务</Button> </Header>
         <Content>
             <List style = {
@@ -293,6 +316,8 @@ class App extends Component {
                   item.loading
                 }
                 active >
+                {item.checked ? null : <Checkbox checked={item.checked} onChange={() => this.onChange(item)}></Checkbox>}
+                
                 <List.Item.Meta avatar = { < Avatar src = "https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" / >
                 }
                 title = { <
@@ -304,26 +329,25 @@ class App extends Component {
                   item.desc
                 }
                 /> 
-                <div> 完成时间 {item.date} </div>  
+                <div> {item.checked ? <span style={{color: '#52c41a'}}>已完成</span> : <span style={{color: '#1890ff'}}>计划完成时间 {item.date}</span>}  </div>  
                 </Skeleton>  
                 </List.Item>
               )
             }
             />
             < Modal
-            title = "删除确认"
+            title = {modalType==='edit'?'编辑任务':'添加任务'}
             centered
+            footer={null}
             visible = {
               this.state.modal1Visible
-            }
-            onOk = {
-              () => this.chooseTask()
             }
             onCancel = {
                 () => this.setModal1Visible(false)
               } >
-
+              <TaskForm edit={this.state.editItem} onChangeTask={(value) => this.chooseTask(value)}></TaskForm>
               </Modal>
+              
             < Modal
             title = "删除确认"
             centered
@@ -338,6 +362,7 @@ class App extends Component {
               } >
               <p> 确认删除此任务吗？ < /p>
               </Modal>
+
           </Content>
         </Layout>
       
@@ -345,4 +370,4 @@ class App extends Component {
     }
   }
 
-export default App;
+export default App
